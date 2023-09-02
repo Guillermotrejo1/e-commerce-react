@@ -14,6 +14,7 @@ function BookInfo({ books, addToCart, cart }) {
   }
 
   function bookExistOnCart() {
+    console.log(cart)
     return cart.find((book) => +book.id === +id)
   }
 
