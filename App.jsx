@@ -1,6 +1,5 @@
 import Nav from "./components/Nav";
-import Footer from "./components/Footer";
-import { BrowserRouter as Router, Routes, Route} from "react-router-dom"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./Pages.jsx/Home";
 import Books from "./Pages.jsx/Books";
 import { books } from "./data";
@@ -12,7 +11,28 @@ function App() {
   const [cart, setCart] = useState([]);
 
   function addToCart(book) {
-    setCart({ ...cart, book });
+    setCart([...cart, { ...book, quantity: 1 }]);
+  }
+
+  function changeQuantity(book, quantity) {
+    setCart(
+      cart.map((item) =>
+        item.id === book.id ? { ...item, quantity: +quantity } : item
+      )
+    );
+  }
+
+  function removeItem(item) {
+    setCart(cart.filter((book) => book.id !== item.id));
+    console.log("removeItem", item);
+  }
+
+  function numberOfItems() {
+    let counter = 0;
+    cart.forEach((item) => {
+      counter += item.quantity;
+    });
+    return counter;
   }
 
   useEffect(() => {
@@ -22,7 +42,7 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <Nav />
+        <Nav numberOfItems={numberOfItems()} />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/books" element={<Books books={books} />} />
@@ -32,8 +52,17 @@ function App() {
               <BookInfo books={books} addToCart={addToCart} cart={cart} />
             }
           />
-          <Route path="/cart" element={<Cart books={books} />} />
-        <Footer />
+          <Route
+            path="/cart"
+            element={
+              <Cart
+                books={books}
+                cart={cart}
+                changeQuantity={changeQuantity}
+                removeItem={removeItem}
+              />
+            }
+          />
         </Routes>
       </div>
     </Router>
